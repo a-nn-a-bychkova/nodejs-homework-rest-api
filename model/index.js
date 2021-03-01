@@ -6,7 +6,7 @@ const listContacts = async () => {
 };
 
 const getContactById = async (id) => {
-  db.find({ id }).value();
+  return db.find({ id }).value();
 };
 
 const removeContact = async (id) => {
@@ -27,7 +27,7 @@ const addContact = async (body) => {
 };
 
 const updateContact = async (id, body) => {
-  const record = db.get("contacts").find({ id }).assign(body).value();
+  const record = db.find({ id }).assign(body).value();
   db.write();
   return record.id ? record : null;
 };

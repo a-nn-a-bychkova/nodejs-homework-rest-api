@@ -2,30 +2,27 @@ const db = require("./db");
 const { v4: uuid } = require("uuid");
 
 const listContacts = async () => {
-  return db.get("contacts").value();
+  return db.value();
 };
 
 const getContactById = async (id) => {
-  db.get("contacts").find({ id }).value();
+  db.find({ id }).value();
 };
 
 const removeContact = async (id) => {
-  const [record] = db.get("cats").remove({ id }).write();
+  const [record] = db.remove({ id }).write();
   return record;
 };
 
 const addContact = async (body) => {
-  console.log(body);
+  // console.log("body", body);
   const id = uuid();
   const record = {
     id,
     ...body,
-
-    // name,
-    // email,
-    // phone,
   };
-  db.get("contacts").push(record).write();
+  // console.log("record", record);
+  db.push(record).write();
   return record;
 };
 

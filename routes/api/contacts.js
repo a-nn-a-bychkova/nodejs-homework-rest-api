@@ -23,12 +23,12 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const contacts = await Contacts.addContact(req.body);
+    const contact = await Contacts.addContact(req.body);
     return res.status(201).json({
       status: "success",
       code: 201,
       data: {
-        contacts,
+        contact,
       },
     });
   } catch (e) {

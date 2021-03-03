@@ -1,15 +1,36 @@
-// const fs = require('fs/promises')
-// const contacts = require('./contacts.json')
+const db = require("./db");
+const { v4: uuid } = require("uuid");
 
-const listContacts = async () => {}
+const listContacts = async () => {
+  return db.value();
+};
 
-const getContactById = async (contactId) => {}
+const getContactById = async (id) => {
+  return db.find({ id }).value();
+};
 
-const removeContact = async (contactId) => {}
+const removeContact = async (id) => {
+  const [record] = db.remove({ id }).write();
+  return record;
+};
 
-const addContact = async (body) => {}
+const addContact = async (body) => {
+  // console.log("body", body);
+  const id = uuid();
+  const record = {
+    id,
+    ...body,
+  };
+  // console.log("record", record);
+  db.push(record).write();
+  return record;
+};
 
-const updateContact = async (contactId, body) => {}
+const updateContact = async (id, body) => {
+  const record = db.find({ id }).assign(body).value();
+  db.write();
+  return record.id ? record : null;
+};
 
 module.exports = {
   listContacts,
@@ -17,4 +38,4 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
-}
+};

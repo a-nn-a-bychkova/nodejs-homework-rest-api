@@ -1,8 +1,9 @@
 const express = require("express");
-const normalizedId = require("../../model/helper");
+const normalizedId = require("../../../helpers/helper");
 const router = express.Router();
-const contactsController = require("../../controllers/contacts");
+const contactsController = require("../../../controllers/contacts");
 const validate = require("./validation");
+// const guard = require("../../../helpers/guard");
 
 router
   .get("/", contactsController.getAllContacts)

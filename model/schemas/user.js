@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const SALT_WORK_FACTOR = 8;
 const { Schema, model } = require("mongoose");
@@ -10,6 +9,11 @@ const userSchema = new Schema(
       type: String,
       minlength: 2,
       default: "Guest",
+    },
+    subscription: {
+      type: String,
+      enum: [Subscription.FREE, Subscription.PRO, Subscription.PREMIUM],
+      default: Subscription.FREE,
     },
     email: {
       type: String,
@@ -23,11 +27,6 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-    },
-    subscription: {
-      type: String,
-      enum: [Subscription.FREE, Subscription.PRO, Subscription.PREMIUM],
-      default: Subscription.FREE,
     },
     token: {
       type: String,

@@ -4,22 +4,23 @@ const { HttpCode } = require("../helpers/constants");
 require("dotenv").config();
 const SECRET_KEY = process.env.JWT_SECRET;
 
-const registration = async (req, res, next) => {
+const reg = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await Users.findByEmail(email);
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
-        message: "email is in use",
+        message: "Email in use",
       });
     }
     const newUser = await Users.create(req.body);
 
     return res.status(HttpCode.CREATED).json({
       data: {
-        id: newUser.id,
+        // id: newUser.id,
         email: newUser.email,
-        name: newUser.name,
+        // name: newUser.name,
+        subscription: newUser.subscription,
       },
     });
   } catch (e) {
@@ -30,12 +31,13 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await Users.findByEmail(email);
-    if (!user || !user.validPassword(password)) {
+    const isValidPassword = await user.validPassword(password);
+    if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         // status: "error",
         // code: HttpCode.UNAUTHORIZED,
         // data: "UNAUTHORIZED",
-        message: "Ошибка от Joi или другой валидационной библиотеки",
+        message: "Email or password is wrong",
       });
     }
     const id = user._id;
@@ -53,6 +55,10 @@ const login = async (req, res, next) => {
     next(e);
   }
 };
-const logout = async (req, res, next) => {};
+const logout = async (req, res, next) => {
+  const id = req.user.id;
+  await Users.updateToken(id, null);
+  return res.status(HttpCode.NO_CONTENT).json({});
+};
 
-module.exports = { registration, login, logout };
+module.exports = { reg, login, logout };

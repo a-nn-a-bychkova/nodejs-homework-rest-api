@@ -7,7 +7,6 @@ const params = {
   secretOrKey: SECRET_KEY,
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
-
 passport.use(
   new Strategy(params, async (payload, done) => {
     try {

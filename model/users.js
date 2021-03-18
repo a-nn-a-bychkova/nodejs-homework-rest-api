@@ -1,4 +1,5 @@
 const User = require("./schemas/user");
+
 const findByEmail = async (email) => {
   return await User.findOne({ email });
 };

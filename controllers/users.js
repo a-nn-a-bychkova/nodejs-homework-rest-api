@@ -10,16 +10,14 @@ const reg = async (req, res, next) => {
     const user = await Users.findByEmail(email);
     if (user) {
       return res.status(HttpCode.CONFLICT).json({
-        message: "Email in use",
+        message: "Email is already in use",
       });
     }
     const newUser = await Users.create(req.body);
 
     return res.status(HttpCode.CREATED).json({
-      data: {
-        // id: newUser.id,
+      user: {
         email: newUser.email,
-        // name: newUser.name,
         subscription: newUser.subscription,
       },
     });
@@ -34,9 +32,6 @@ const login = async (req, res, next) => {
     const isValidPassword = await user.validPassword(password);
     if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
-        // status: "error",
-        // code: HttpCode.UNAUTHORIZED,
-        // data: "UNAUTHORIZED",
         message: "Email or password is wrong",
       });
     }
@@ -49,6 +44,10 @@ const login = async (req, res, next) => {
     return res.status(HttpCode.OK).json({
       data: {
         token,
+        user: {
+          email: user.email,
+          subscription: user.subscription,
+        },
       },
     });
   } catch (e) {
@@ -56,9 +55,37 @@ const login = async (req, res, next) => {
   }
 };
 const logout = async (req, res, next) => {
-  const id = req.user.id;
-  await Users.updateToken(id, null);
-  return res.status(HttpCode.NO_CONTENT).json({});
+  try {
+    const id = req.user.id;
+    const user = await Users.findById(id);
+    if (!user) {
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        message: "Not authorized",
+      });
+    }
+    await Users.updateToken(id, null);
+    return res.status(HttpCode.NO_CONTENT).json({});
+  } catch (err) {
+    next(err);
+  }
 };
-
-module.exports = { reg, login, logout };
+const current = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const user = await Users.findById(id);
+    if (!user) {
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        message: "Not authorized",
+      });
+    }
+    return res.status(HttpCode.OK).json({
+      data: {
+        email: user.email,
+        subscription: user.subscription,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { reg, login, logout, current };

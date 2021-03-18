@@ -5,7 +5,7 @@ const getAllContacts = async (req, res, next) => {
     const contacts = await Contacts.listContacts(userId, req.query);
     return res.json({
       data: {
-        contacts,
+        ...contacts,
       },
     });
   } catch (e) {
@@ -14,10 +14,10 @@ const getAllContacts = async (req, res, next) => {
 };
 
 const getById = async (req, res, next) => {
-  const id = normalizedId(req.params.contactId);
+  const id = req.params.contactId;
   try {
     const userId = req.user.id;
-    const contact = await Contacts.getContactById(id);
+    const contact = await Contacts.getContactById(id, userId);
     if (contact) {
       return res.json({
         data: {
@@ -38,7 +38,7 @@ const create = async (req, res, next) => {
   try {
     const userId = req.user.id;
     if (req.body) {
-      const contact = await Contacts.addContact(req.body);
+      const contact = await Contacts.addContact(userId, req.body);
       return res.status(201).json({
         data: {
           contact,
@@ -58,10 +58,10 @@ const create = async (req, res, next) => {
 };
 
 const remove = async (req, res, next) => {
-  const id = normalizedId(req.params.contactId);
+  const id = req.params.contactId;
   try {
     const userId = req.user.id;
-    const contact = await Contacts.removeContact(id);
+    const contact = await Contacts.removeContact(id, userId);
     if (contact) {
       return res.status(200).json({
         message: "contact deleted",
@@ -80,7 +80,7 @@ const remove = async (req, res, next) => {
 };
 
 const update = async (req, res, next) => {
-  const id = normalizedId(req.params.contactId);
+  const id = req.params.contactId;
   try {
     if (req.body) {
       const contact = await Contacts.updateContact(id, req.body);

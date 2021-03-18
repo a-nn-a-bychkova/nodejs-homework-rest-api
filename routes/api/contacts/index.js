@@ -1,5 +1,5 @@
 const express = require("express");
-const normalizedId = require("../../../helpers/helper");
+
 const router = express.Router();
 const contactsController = require("../../../controllers/contacts");
 const validate = require("./validation");

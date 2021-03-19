@@ -8,19 +8,13 @@ const Contact = require("./schemas/contact");
 //   return results;
 // };
 
-const listContacts = async (
-  userId,
-  { sortBy, sortByDesc, filter, limit = "5", offset = "0" }
-) => {
+const listContacts = async (userId, { filter, limit = "5", offset = "0" }) => {
   const results = await Contact.paginate(
     { owner: userId },
     {
       limit,
       offset,
-      sort: {
-        ...(sortBy ? { [`${sortBy}`]: 1 } : {}), // name: 1 --- if sortBy = name
-        ...(sortByDesc ? { [`${sortByDesc}`]: -1 } : {}), // name: -1
-      },
+      sort: { subscription: 1 },
       select: filter ? filter.split("|").join(" ") : "",
       populate: {
         path: "owner",

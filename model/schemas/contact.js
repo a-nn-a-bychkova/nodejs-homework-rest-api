@@ -1,12 +1,17 @@
 const mongoose = require("mongoose");
 const { Schema, model, SchemaTypes } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
-
+const { Subscription } = require("../../helpers/constants");
 const contactSchema = new Schema(
   {
     name: {
       type: String,
       required: [true, "write contact name"],
+    },
+    subscription: {
+      type: String,
+      enum: [Subscription.FREE, Subscription.PRO, Subscription.PREMIUM],
+      default: Subscription.FREE,
     },
     email: {
       type: String,

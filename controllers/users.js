@@ -88,4 +88,17 @@ const current = async (req, res, next) => {
     next(err);
   }
 };
-module.exports = { reg, login, logout, current };
+
+const update = async (req, res, next) => {
+  try {
+    const { id, subscription } = req.body;
+    const user = await Users.updateUserSubscription(id, subscription);
+    return res.status(HttpCode.OK).json({
+      message: `The subscription was successfully changed to ${subscription}`,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = { reg, login, logout, current, update };

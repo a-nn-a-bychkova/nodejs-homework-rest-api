@@ -30,6 +30,15 @@ const schemaLoginUser = Joi.object({
     Subscription.PREMIUM
   ),
 });
+
+const schemaUpdateUserSubscription = Joi.object({
+  subscription: Joi.string().valid(
+    Subscription.FREE,
+    Subscription.PRO,
+    Subscription.PREMIUM
+  ).required,
+});
+
 const validate = (schema, obj, next) => {
   const { error } = schema.validate(obj);
   if (error) {
@@ -44,9 +53,12 @@ const validate = (schema, obj, next) => {
   }
   next();
 };
-module.exports.registerUser = (req, re, next) => {
+module.exports.registerUser = (req, res, next) => {
   return validate(schemaRegisterUser, req.body, next);
 };
-module.exports.loginUser = (req, re, next) => {
+module.exports.loginUser = (req, res, next) => {
   return validate(schemaLoginUser, req.body, next);
+};
+module.exports.updateSubscription = (req, res, next) => {
+  return validate(schemaUpdateUserSubscription, req.body, next);
 };

@@ -91,11 +91,25 @@ const current = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const { id, subscription } = req.body;
+    const id = req.user.id;
+    const subscription = req.body.subscription;
     const user = await Users.updateUserSubscription(id, subscription);
+    if (!user) {
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        message: "Not authorized",
+      });
+    }
     return res.status(HttpCode.OK).json({
+      data: {
+        subscription,
+      },
       message: `The subscription was successfully changed to ${subscription}`,
     });
+    // const { id, subscription } = req.body;
+    // const user = await Users.updateUserSubscription(id, subscription);
+    // return res.status(HttpCode.OK).json({
+    //   message: `The subscription was successfully changed to ${subscription}`,
+    // });
   } catch (e) {
     next(e);
   }

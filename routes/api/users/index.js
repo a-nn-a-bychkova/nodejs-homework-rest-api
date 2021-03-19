@@ -14,5 +14,5 @@ router.post(
 router.post("/auth/login", validate.loginUser, userController.login);
 router.post("/auth/logout", guard, userController.logout);
 router.get("/current", guard, userController.current);
-router.patch("/", validate.updateSubscription, userController.update);
+router.patch("/", guard, validate.updateSubscription, userController.update);
 module.exports = router;

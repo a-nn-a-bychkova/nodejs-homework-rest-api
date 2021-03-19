@@ -32,11 +32,9 @@ const schemaLoginUser = Joi.object({
 });
 
 const schemaUpdateUserSubscription = Joi.object({
-  subscription: Joi.string().valid(
-    Subscription.FREE,
-    Subscription.PRO,
-    Subscription.PREMIUM
-  ).required,
+  subscription: Joi.string()
+    .valid(Subscription.FREE, Subscription.PRO, Subscription.PREMIUM)
+    .required(),
 });
 
 const validate = (schema, obj, next) => {

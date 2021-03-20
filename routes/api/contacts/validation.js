@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { Subscription } = require("../../../helpers/constants");
 
 const schemaAddContact = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
@@ -13,6 +14,12 @@ const schemaAddContact = Joi.object({
     .length(10)
     .pattern(/^[0-9]+$/)
     .required(),
+
+  subscription: Joi.string().valid(
+    Subscription.FREE,
+    Subscription.PRO,
+    Subscription.PREMIUM
+  ),
 });
 
 const schemaUpdateContact = Joi.object({

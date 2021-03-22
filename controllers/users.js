@@ -19,6 +19,7 @@ const reg = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatar: newUser.avatar,
       },
     });
   } catch (e) {
@@ -29,7 +30,7 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await Users.findByEmail(email);
-    const isValidPassword = await user.validPassword(password);
+    const isValidPassword = (await user) ? user.validPassword(password) : null;
     if (!user || !isValidPassword) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         message: "Email or password is wrong",

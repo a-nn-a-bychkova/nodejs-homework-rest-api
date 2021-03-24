@@ -2,9 +2,9 @@ const multer = require("multer");
 const path = require("path");
 //если переменная окружения
 require("dotenv").config();
-const UPLOAD_DIR = path(proces.cwd(), process.env.UPLOAD_DIR);
+const UPLOAD_DIR = path.join(process.cwd(), process.env.UPLOAD_DIR);
 
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, UPLOAD_DIR);
   },
@@ -16,8 +16,8 @@ var storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: { fileSize: 2000000 },
-  fileFilter: (req, res, cb) => {
-    if (file.minetype.includes("image")) {
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.includes("image")) {
       cb(null, true);
       return;
     }

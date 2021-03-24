@@ -1,5 +1,6 @@
 const Joi = require("joi");
-const { Subscription } = require("../../../helpers/constants");
+const { Subscription, HttpCode } = require("../../../helpers/constants");
+
 const schemaRegisterUser = Joi.object({
   name: Joi.string().alphanum().min(3).max(30),
   email: Joi.string()
@@ -59,4 +60,13 @@ module.exports.loginUser = (req, res, next) => {
 };
 module.exports.updateSubscription = (req, res, next) => {
   return validate(schemaUpdateUserSubscription, req.body, next);
+};
+
+module.exports.uploadAvatar = (req, res, next) => {
+  if (!req.file) {
+    return res.status(HttpCode.BAD_REQUEST).json({
+      message: "Field of avatar file is not found",
+    });
+  }
+  next();
 };

@@ -9,6 +9,7 @@ db.then(() => {
     const UPLOAD_DIR = process.env.UPLOAD_DIR;
     const AVATARS_OF_USERS = process.env.AVATARS_OF_USERS;
     await createFolderIsExist(UPLOAD_DIR);
+    await createFolderIsExist("public");
     await createFolderIsExist(AVATARS_OF_USERS);
     console.log(`Server running. Use our API on port: ${PORT}`);
   });

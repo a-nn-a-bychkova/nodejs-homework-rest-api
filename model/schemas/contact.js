@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { Schema, model, SchemaTypes } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const { Subscription } = require("../../helpers/constants");

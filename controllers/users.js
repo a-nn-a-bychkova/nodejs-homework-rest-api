@@ -191,4 +191,26 @@ const saveAvatarToCloud = async (req) => {
   return result;
 };
 
-module.exports = { reg, login, logout, current, update, avatars };
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyToken(req.params.token)
+    if (user) {
+      await Users.updateVerifyToken(user.id, true, null)
+      return res.json({
+        status: 'success',
+        code: HttpCode.OK,
+        message: 'Verification successful!',
+      })
+    }
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: 'error',
+      code: HttpCode.BAD_REQUEST,
+      data: 'Bad request',
+      message: 'Link is not valid',
+    })
+  } catch (e) {
+    next(e)
+  }
+}
+module.exports = { reg, login, logout, current, update, avatars, verify };
+// module.exports = { reg, login, logout, current, update, avatars};

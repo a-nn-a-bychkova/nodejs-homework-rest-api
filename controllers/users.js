@@ -28,13 +28,13 @@ const reg = async (req, res, next) => {
         message: "Email is already in use",
       });
     }
-    const verifyToken = nanoid()
+    const verificationToken = nanoid()
     const emailService = new EmailService(process.env.NODE_ENV)
-    await emailService.sendEmail(verifyToken, email)
+    await emailService.sendEmail(verificationToken, email)
     const newUser = await Users.create({
       ...req.body,
       verify: false,
-      verifyToken,
+      verificationToken,
     })
     return res.status(HttpCode.CREATED).json({
       status: 'success',
@@ -205,9 +205,9 @@ const saveAvatarToCloud = async (req) => {
 
 const verify = async (req, res, next) => {
   try {
-    const user = await Users.findByVerifyToken(req.params.token)
+    const user = await Users.findByVerificationToken(req.params.token)
     if (user) {
-      await Users.updateVerifyToken(user.id, true, null)
+      await Users.updateVerificationToken(user.id, true, null)
       return res.json({
         status: 'success',
         code: HttpCode.OK,

@@ -27,7 +27,7 @@ class EmailService {
     const mailGenerator = new this.GenerateTemplate({
       theme: 'neopolitan',
       product: {
-        name: 'System Cats',
+        name: 'Homework',
         link: this.link,
       },
     })

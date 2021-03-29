@@ -8,8 +8,8 @@ const findById = async (id) => {
   return await User.findOne({ _id: id });
 };
 
-const create = async ({ name, phone, email, password }) => {
-  const user = new User({ name, phone, email, password });
+const create = async ({ name, phone, email, password,verify,verifyToken }) => {
+  const user = new User({ name, phone, email, password,verify,verifyToken });
   return await user.save();
 };
 

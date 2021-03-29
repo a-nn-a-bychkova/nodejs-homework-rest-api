@@ -5,8 +5,8 @@ const config = require('../config/email.json')
 require('dotenv').config()
 
 class EmailService {
-  #sender = sgMail
-  #GenerateTemplate = Mailgen
+  sender = sgMail
+  GenerateTemplate = Mailgen
   constructor(env) {
     switch (env) {
       case 'development':
@@ -23,8 +23,8 @@ class EmailService {
         break
    }
   }
-  #createTemplate(verifyToken, name = 'Guest') {
-    const mailGenerator = new this.#GenerateTemplate({
+  createTemplate(verifyToken, name = 'Guest') {
+    const mailGenerator = new this.GenerateTemplate({
       theme: 'neopolitan',
       product: {
         name: 'System Cats',
@@ -50,16 +50,16 @@ class EmailService {
     return mailGenerator.generate(template)
   }
   async sendEmail(verifyToken, email, name) {
-    const emailBody = this.#createTemplate(verifyToken, name)
-    this.#sender.setApiKey(process.env.SENDGRID_API_KEY)
+    const emailBody = this.createTemplate(verifyToken, name)
+    this.sender.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
       to: email,
-      from: 'no-reply@system-cats.com', // Use the email address or domain you verified above
+      from: 'bychkova.dev@gmail.com', // Use the email address or domain you verified above
       subject: 'Подтверждение регистрации',
       html: emailBody,
     }
     //ES6
-    await this.#sender.send(msg)
+    await this.sender.send(msg)
   }
 }
 

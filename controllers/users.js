@@ -2,10 +2,13 @@ const jwt = require("jsonwebtoken");
 const Users = require("../model/users");
 const { HttpCode } = require("../helpers/constants");
 const fs = require("fs").promises;
-// const path = require("path");
+const path = require("path");
+const Jimp = require('jimp')
 const { promisify } = require("util");
 const cloudinary = require("cloudinary").v2;
-// const createFolderIsExist = require("../helpers/create-dir");
+const createFolderIsExist = require("../helpers/create-dir");
+const { nanoid } = require('nanoid')
+const EmailService = require('../services/email')
 require("dotenv").config();
 
 const SECRET_KEY = process.env.JWT_SECRET;
@@ -25,15 +28,24 @@ const reg = async (req, res, next) => {
         message: "Email is already in use",
       });
     }
-    const newUser = await Users.create(req.body);
-
+    const verifyToken = nanoid()
+    const emailService = new EmailService(process.env.NODE_ENV)
+    await emailService.sendEmail(verifyToken, email)
+    const newUser = await Users.create({
+      ...req.body,
+      verify: false,
+      verifyToken,
+    })
     return res.status(HttpCode.CREATED).json({
-      user: {
+      status: 'success',
+      code: HttpCode.CREATED,
+      data: {
+        id: newUser.id,
         email: newUser.email,
-        subscription: newUser.subscription,
+        name: newUser.name,
         avatar: newUser.avatar,
       },
-    });
+    })
   } catch (e) {
     next(e);
   }
@@ -212,5 +224,6 @@ const verify = async (req, res, next) => {
     next(e)
   }
 }
+
 module.exports = { reg, login, logout, current, update, avatars, verify };
 // module.exports = { reg, login, logout, current, update, avatars};

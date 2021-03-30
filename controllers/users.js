@@ -2,10 +2,13 @@ const jwt = require("jsonwebtoken");
 const Users = require("../model/users");
 const { HttpCode } = require("../helpers/constants");
 const fs = require("fs").promises;
-// const path = require("path");
+const path = require("path");
+const Jimp = require('jimp')
 const { promisify } = require("util");
 const cloudinary = require("cloudinary").v2;
-// const createFolderIsExist = require("../helpers/create-dir");
+const createFolderIsExist = require("../helpers/create-dir");
+const { nanoid } = require('nanoid')
+const EmailService = require('../services/email')
 require("dotenv").config();
 
 const SECRET_KEY = process.env.JWT_SECRET;
@@ -25,15 +28,24 @@ const reg = async (req, res, next) => {
         message: "Email is already in use",
       });
     }
-    const newUser = await Users.create(req.body);
-
+    const verificationToken = nanoid()
+    const emailService = new EmailService(process.env.NODE_ENV)
+    await emailService.sendEmail(verificationToken, email)
+    const newUser = await Users.create({
+      ...req.body,
+      verify: false,
+      verificationToken,
+    })
     return res.status(HttpCode.CREATED).json({
-      user: {
+      status: 'success',
+      code: HttpCode.CREATED,
+      data: {
+        id: newUser.id,
         email: newUser.email,
-        subscription: newUser.subscription,
+        name: newUser.name,
         avatar: newUser.avatar,
       },
-    });
+    })
   } catch (e) {
     next(e);
   }
@@ -191,4 +203,27 @@ const saveAvatarToCloud = async (req) => {
   return result;
 };
 
-module.exports = { reg, login, logout, current, update, avatars };
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerificationToken(req.params.token)
+    if (user) {
+      await Users.updateVerificationToken(user.id, true, null)
+      return res.json({
+        status: 'success',
+        code: HttpCode.OK,
+        message: 'Verification successful!',
+      })
+    }
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: 'error',
+      code: HttpCode.BAD_REQUEST,
+      data: 'Bad request',
+      message: 'Link is not valid',
+    })
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports = { reg, login, logout, current, update, avatars, verify };
+// module.exports = { reg, login, logout, current, update, avatars};
